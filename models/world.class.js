@@ -16,11 +16,19 @@ class World {
     ];
     canvas;
     ctx;
+    keyboard;
 
-    constructor(canvas) {
+    constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
+        this.keyboard = keyboard;
         this.draw();
+        this.setWorld();
+    }
+
+
+    setWorld() {
+        this.character.world = this;
     }
 
 
@@ -31,7 +39,7 @@ class World {
         this.addObjectsToMap(this.clouds);
         this.addToMap(this.character);
         this.addObjectsToMap(this.enemies);
-        
+
 
 
         // Draw() wird immer wieder aufgerufen

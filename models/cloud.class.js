@@ -9,11 +9,11 @@ class Cloud extends MovableObject {
         this.x = Math.random() * 500; //Zahl zwischen 200 und 700
         this.animate();
 
+        
+
     }
 
     animate() {
-        setInterval(() => {
-            this.x -= 0.15;
-        }, 1000 / 60);
+        this.moveLeft();
     }
 }
