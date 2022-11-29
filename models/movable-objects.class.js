@@ -12,6 +12,9 @@ class MovableObject {
     speedY = 0;
     acceleration = 1;
 
+    energy = 100;
+    lastHit = 0;
+
     applyGravity() {
 
 
@@ -38,17 +41,44 @@ class MovableObject {
     }
 
     drawFrame(ctx) {
-        ctx.beginPath();
-        ctx.lineWidth = '5';
-        ctx.strokeStyle = 'blue';
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
+
+        if (this instanceof Character || this instanceof Chicken) {
+
+
+            ctx.beginPath();
+            ctx.lineWidth = '5';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
     }
 
-    /**
-     * 
-     * @param {Array} arr - ['img/image1.png', 'img/image2.png', ...] 
-     */
+    isColliding(mo) {
+        return this.x + this.width > mo.x &&
+            this.y + this.height > mo.y &&
+            this.x < mo.x &&
+            this.y < mo.y + mo.height;
+    }
+
+    hit() {
+        this.energy -= 5;
+        if(this.energy < 0) {
+            this.energy = 0;
+        } else {
+            this.lastHit = new Date().getTime();
+        }
+    }
+
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit; // Difference in milliseconds
+        timepassed = timepassed / 1000; // Difference in seconds
+        console.log(timepassed);
+        return timepassed < 0.5;
+    }
+
+    isDead() {
+        return this.energy == 0;
+    }
 
     loadImages(arr) {
         arr.forEach((path) => {
@@ -63,7 +93,7 @@ class MovableObject {
     }
 
     moveLeft() {
-            this.x -= this.speed;
+        this.x -= this.speed;
     }
 
     playAnimation(images) {
