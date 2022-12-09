@@ -1,9 +1,19 @@
 const level1 = new Level(
     [
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new Endboss()
+        new Chicken(300),
+        new Chicken(500),
+        new Chicken(600),
+        new Chicken(700),
+        new Chicken(800),
+        new Endboss(),
+        new Box
+    ],
+    [
+        new Coin(400, 100),
+        new Coin(500, 100),
+        new Coin(600, 100),
+        new Coin(700, 100),
+        
     ],
     [
         new Cloud()
