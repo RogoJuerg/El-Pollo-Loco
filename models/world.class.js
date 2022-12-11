@@ -53,6 +53,11 @@ class World {
         this.checkEnemyCollision();
         this.checkCoinCollision();
         this.checkProjectileCollision();
+        this.checkBoxCollision();
+
+        this.adjustOriginGround(this.character)
+
+        console.log(this.character.y);
 
     }
 
@@ -62,7 +67,86 @@ class World {
                 this.character.hit();
                 this.statusBar.setPercentage(this.character.energy);
             };
+
+            this.level.obstacleObjects.forEach((obstacle) => {
+                if (enemy.isCollidingLeft(obstacle)) {
+                    obstacle.slideLeft(enemy.speed);
+                };
+                if (enemy.isColliding(obstacle)) {
+                    obstacle.slideRight(enemy.speed);
+                };
+
+                if (obstacle.isCollidingLeft(enemy)) {
+                    enemy.slideLeft(obstacle.speed);
+                };
+                if (obstacle.isColliding(enemy)) {
+                    enemy.slideRight(obstacle.speed);
+                };
+
+
+            });
+
+        }
+        );
+    }
+
+    checkBoxCollision() {
+
+        this.level.obstacleObjects.forEach((obstacle) => {
+            this.adjustOriginGround(obstacle);
+            this.character.lastRelativeGround = this.character.relativeGround;
+            
+            // console.log(obstacle.collided);
+            if (this.character.isCollidingLeft(obstacle)) {
+                obstacle.slideLeft(this.character.speed);
+            };
+            if (this.character.isColliding(obstacle)) {
+                obstacle.slideRight(this.character.speed);
+            };
+            
+            this.checkBoxTopCollision(obstacle);
+
+            this.compareCollisions(obstacle, this.character);
+            this.compareCollisions(this.character, obstacle);
+
+            this.level.obstacleObjects.forEach((obstacle2) => {
+                this.compareCollisions(obstacle, obstacle2);
+                this.compareCollisions(obstacle2, obstacle);
+
+            });
         });
+    }
+
+    /**
+     * Compares collision between 2 entities
+     * @param {*} col1 the colliding entity
+     * @param {*} col2 the collider the first entity is colliding with
+     */
+
+    compareCollisions(col1, col2) {
+        if (col1.isCollidingLeft(col2) && col2.isSlideable) {
+            col2.slideLeft(col2.speed);
+        };
+        if (col1.isColliding(col2) && col2.isSlideable) {
+            col2.slideRight(col2.speed);
+        };
+    }
+
+    adjustOriginGround(entity) {
+        if (entity.y > entity.originGround) {
+            entity.y = entity.originGround;
+        }
+    }
+
+    checkBoxTopCollision(obstacle) {
+        if (this.character.isCollidingTop(obstacle) && !obstacle.collided) {
+            obstacle.collided = true;
+            this.character.relativeGround = this.character.relativeGround - obstacle.height;
+        };
+        if (!this.character.isCollidingTop(obstacle) && obstacle.collided) {
+            this.character.relativeGround = this.character.relativeGround + obstacle.height;
+            obstacle.collided = false;
+        }
     }
 
     checkProjectileCollision() {
@@ -72,7 +156,6 @@ class World {
                     if (bottle.isColliding(enemy)) {
                         let indexEnemy = this.level.enemies.indexOf(enemy);
                         let indexBottle = this.throwableObject.indexOf(bottle);
-                        console.log('Enemy Hit', enemy);
                         this.level.enemies.splice(indexEnemy, 1);
                         this.coinExplosion(enemy.x);
                     }
@@ -125,6 +208,7 @@ class World {
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.obstacleObjects);
 
         this.ctx.translate(-this.camera_x, 0);
 

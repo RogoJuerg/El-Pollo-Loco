@@ -1,8 +1,14 @@
 class Character extends MovableObject {
-    y = 20; // 135 Floor position
+    y = 20;
     width = 100;
     height = 200;
     speed = 4;
+
+    collisionBoxOffset = 5;
+
+    originGround = 230;
+
+    relativeGround = 230;
 
     IMAGES_WALKING = [
         '../img/2_character_pepe/2_walk/W-21.png',
@@ -64,7 +70,6 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
 
-        this.relativeGround = 215;
 
         this.applyGravity();
         this.animate();
