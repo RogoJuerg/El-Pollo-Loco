@@ -1,7 +1,10 @@
 class Chicken extends MovableObject {
-    y = 330;
+    y = 000;
     width = 80;
     height = 100;
+
+    originGround = 330;
+    relativeGround = 330;
 
     IMAGES_WALKING = [
         '../img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -15,11 +18,11 @@ class Chicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
 
         this.x = position_x + Math.random() * 500; //Zahl zwischen 200 und 700
-        this.speed = 0.15 + Math.random() * 0.25;
+        this.speed = 0.2 + Math.random() * 0.25;
 
 
 
-
+        this.applyGravity();
         this.animate();
 
     }

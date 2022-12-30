@@ -6,6 +6,8 @@ class MovableObject extends DrawableObject {
     energy = 100;
     lastHit = 0;
 
+    offset = 0;
+
     originGround;
 
 
@@ -32,23 +34,37 @@ class MovableObject extends DrawableObject {
 
 
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-            this.y + this.height - 10 > mo.y &&
-            this.x < mo.x &&
-            this.y < mo.y + mo.height - 10;
+        return this.x + this.width >= mo.x &&
+            this.x <= mo.x + mo.width &&
+            this.y + this.height >= mo.y &&
+            this.y <= mo.y + mo.height;
     }
 
-    isCollidingLeft(mo) {
-        return this.x + this.width > mo.x + mo.width &&
-            this.y + this.height - 5 > mo.y &&
-            this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height - 5;
+    isCollidingRight(mo, offset) {
+        return this.x + this.width >= mo.x - 5 &&
+            this.y - offset + this.height >= mo.y + 50 &&
+            this.x <= mo.x &&
+            this.y <= mo.y + mo.height;
     }
 
-    isCollidingTop(mo) {
+    isCollidingLeft(mo, offset) {
+        return this.x + this.width >= mo.x + mo.width &&
+            this.y + this.height >= mo.y + 50 &&
+            this.x <= mo.x + mo.width &&
+            this.y + this.width <= mo.y + mo.height;
+    }
+
+    isCollidingTop(mo, offset) {
+        return this.x + this.width >= mo.x + 10 &&
+            this.y + this.height - offset >= mo.y &&
+            this.x <= mo.x + mo.width - 5 &&
+            this.y - offset <= mo.y;
+    }
+
+    isCollidingBottom(mo) {
         return this.x + this.width + mo.width - 20 > mo.x + mo.width &&
-            this.y + this.height + 5 > mo.y &&
-            this.x < mo.x + mo.width &&
+            this.y + this.height + 5 > mo.y + mo.height &&
+            this.x < mo.x + mo.width - 5 &&
             this.y < mo.y + mo.height + 5;
     }
 

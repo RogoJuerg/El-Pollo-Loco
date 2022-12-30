@@ -14,6 +14,9 @@ class Coin extends MovableObject {
 
     coinDrop_sound;
 
+    originGround = 360;
+    relativeGround = 360;
+
     constructor(x, y) {
         super().loadImage('../img/8_coin/coin_2.png');
         this.loadImages(this.IMAGES);
@@ -24,8 +27,6 @@ class Coin extends MovableObject {
         this.x = x;
         this.y = y;
         this.speedY = 10;
-
-        this.relativeGround = 360;
 
 
         this.applyGravity();

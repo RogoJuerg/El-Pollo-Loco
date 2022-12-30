@@ -3,14 +3,16 @@ class Level {
     coins;
     clouds;
     backgroundObjects;
-    obstacleObjects
-    level_end_x = 2200;
+    obstacleObjects;
+    shops;
+    level_end_x = 3000;
 
-    constructor(enemies, coins, clouds, backgroundObjects, obstacleObjects) {
+    constructor(enemies, coins, clouds, backgroundObjects, obstacleObjects, shops) {
         this.enemies = enemies;
         this.coins = coins;
         this.clouds = clouds;
         this.backgroundObjects = backgroundObjects;
         this.obstacleObjects = obstacleObjects;
+        this.shops = shops;
     }
 }

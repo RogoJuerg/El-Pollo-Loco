@@ -1,11 +1,13 @@
 class Box extends ObstacleObject {
 
-    width = 75;
-    height = 75;
+    width = 85;
+    height = 85;
 
-    originGround = 350;
+    isSlideable = true;
 
-    relativeGround = 350;
+    originGround = 340;
+
+    relativeGround = 340;
 
     speed = 2;
 

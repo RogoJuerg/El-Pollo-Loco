@@ -6,16 +6,22 @@ class World {
     keyboard;
     camera_x = 0;
     statusBar = new StatusBar();
+    moneyCounter = new MoneyCounter();
+    shopCloud = new ShopCloud();
     throwableObject = [];
     coins = [];
     playerCoins = 0;
+    playerBottles = 2;
+    showShopCloud = false;
 
     coinCollect_sound = new Audio('../audio/coin_collect.wav');
+    
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.ctx.font = "40px MexicanTequila, sans-serif";
         this.draw();
         this.setWorld();
         this.checkCollisions();
@@ -43,9 +49,10 @@ class World {
     }
 
     checkThrowObjects() {
-        if (this.keyboard.D) {
-            let bottle = new ThrowableObjects(this.character.x + 80, this.character.y + 75)
+        if (this.keyboard.D && this.playerBottles > 0) {
+            let bottle = new ThrowableObjects(this.character.x + 70, this.character.y + 10);
             this.throwableObject.push(bottle);
+            this.playerBottles -= 1;
         }
     }
 
@@ -54,36 +61,31 @@ class World {
         this.checkCoinCollision();
         this.checkProjectileCollision();
         this.checkBoxCollision();
+        this.checkShopCollision();
 
-        this.adjustOriginGround(this.character)
-
-        console.log(this.character.y);
-
+        this.adjustOriginGround(this.character);
     }
 
     checkEnemyCollision() {
         this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy)) {
+            this.adjustOriginGround(enemy);
+            if (this.character.isColliding(enemy, this.character.offset)) {
                 this.character.hit();
                 this.statusBar.setPercentage(this.character.energy);
             };
 
             this.level.obstacleObjects.forEach((obstacle) => {
-                if (enemy.isCollidingLeft(obstacle)) {
-                    obstacle.slideLeft(enemy.speed);
-                };
-                if (enemy.isColliding(obstacle)) {
-                    obstacle.slideRight(enemy.speed);
-                };
+                this.compareCollisions(enemy, obstacle);
+                if(obstacle.isCollidingRight(enemy, 0)) {
+                    enemy.otherDirection = false;
+                }
+                this.compareCollisions(obstacle, enemy);
 
-                if (obstacle.isCollidingLeft(enemy)) {
-                    enemy.slideLeft(obstacle.speed);
-                };
-                if (obstacle.isColliding(enemy)) {
-                    enemy.slideRight(obstacle.speed);
-                };
-
-
+                this.level.obstacleObjects.forEach((obstacle2) => {
+                    this.compareCollisions(enemy, obstacle2);
+                    this.compareCollisions(obstacle2, enemy);
+                });
+                
             });
 
         }
@@ -91,28 +93,26 @@ class World {
     }
 
     checkBoxCollision() {
-
         this.level.obstacleObjects.forEach((obstacle) => {
             this.adjustOriginGround(obstacle);
             this.character.lastRelativeGround = this.character.relativeGround;
-            
-            // console.log(obstacle.collided);
-            if (this.character.isCollidingLeft(obstacle)) {
-                obstacle.slideLeft(this.character.speed);
-            };
-            if (this.character.isColliding(obstacle)) {
-                obstacle.slideRight(this.character.speed);
-            };
-            
-            this.checkBoxTopCollision(obstacle);
 
+            if(this.character.isCollidingBottom(obstacle)) {
+                this.character.y += 5;
+                this.character.speedY = 0;
+            }
+            if (this.character.isCollidingLeft(obstacle, this.character.offset) && obstacle.isSlideable) {
+                this.compareCollisions(this.character, obstacle);
+            };
+            if (this.character.isCollidingRight(obstacle, this.character.offset) && obstacle.isSlideable) {
+                this.compareCollisions(this.character, obstacle);
+            };
+            this.checkTopCollision(this.character, obstacle);
             this.compareCollisions(obstacle, this.character);
             this.compareCollisions(this.character, obstacle);
-
             this.level.obstacleObjects.forEach((obstacle2) => {
                 this.compareCollisions(obstacle, obstacle2);
                 this.compareCollisions(obstacle2, obstacle);
-
             });
         });
     }
@@ -124,12 +124,32 @@ class World {
      */
 
     compareCollisions(col1, col2) {
-        if (col1.isCollidingLeft(col2) && col2.isSlideable) {
-            col2.slideLeft(col2.speed);
+        if (col1.isCollidingLeft(col2, col2.offset) && col2.isSlideable) {
+            col2.slideLeft(col1.speed);
+            col1.slideRight(col2.speed);
         };
-        if (col1.isColliding(col2) && col2.isSlideable) {
+        if (col1.isCollidingRight(col2, col2.offset) && col2.isSlideable) {
             col2.slideRight(col2.speed);
+            col1.slideLeft(col2.speed);
         };
+    }
+
+    checkShopCollision() {
+        console.log(this.playerBottles);
+        this.level.shops.forEach((shop) => {
+            if(this.character.isColliding(shop, this.character.offset)){
+                console.log('Show bubble'); // Show bubble with info
+                if(this.keyboard.F && this.checkIfPlayerHasEnoughCoind(5)) {
+                    console.log('bought');
+                    this.addBottle(1);
+                    this.playerCoins -= 5;
+                }
+            }
+        });
+    }
+
+    checkIfPlayerHasEnoughCoind(minAmount) {
+        return (this.playerCoins >= minAmount);
     }
 
     adjustOriginGround(entity) {
@@ -138,37 +158,42 @@ class World {
         }
     }
 
-    checkBoxTopCollision(obstacle) {
-        if (this.character.isCollidingTop(obstacle) && !obstacle.collided) {
+    checkTopCollision(collider, obstacle) {
+        if (collider.isCollidingTop(obstacle, collider.offset) && !obstacle.collided) {
             obstacle.collided = true;
-            this.character.relativeGround = this.character.relativeGround - obstacle.height;
+            this.changeRelativeHeight(collider, obstacle);
         };
-        if (!this.character.isCollidingTop(obstacle) && obstacle.collided) {
-            this.character.relativeGround = this.character.relativeGround + obstacle.height;
+        if (!collider.isCollidingTop(obstacle, collider.offset) && obstacle.collided) {
+            this.changeRelativeHeightBack(collider, obstacle);
             obstacle.collided = false;
         }
+    }
+
+    changeRelativeHeight(collider, obstacle) {
+        collider.relativeGround = collider.relativeGround - (obstacle.y + obstacle.height);
+    }
+
+    changeRelativeHeightBack(collider, obstacle) {
+        collider.relativeGround = collider.relativeGround + (obstacle.y + obstacle.height);
     }
 
     checkProjectileCollision() {
         if (this.throwableObject) {
             this.level.enemies.forEach((enemy) => {
                 this.throwableObject.forEach((bottle) => {
-                    if (bottle.isColliding(enemy)) {
+                    if (bottle.isColliding(enemy, bottle.offset)) {
                         let indexEnemy = this.level.enemies.indexOf(enemy);
-                        let indexBottle = this.throwableObject.indexOf(bottle);
                         this.level.enemies.splice(indexEnemy, 1);
                         this.coinExplosion(enemy.x);
                     }
                 })
             })
         }
-
     }
-
 
     checkCoinCollision() {
         this.level.coins.forEach((coin) => {
-            if (this.character.isColliding(coin)) {
+            if (this.character.isColliding(coin, 0)) {
                 this.collectCoin(coin);
             };
         });
@@ -178,6 +203,10 @@ class World {
         this.coinCollect_sound.cloneNode(true).play();
         this.playerCoins += 1;
         this.removeCoin(coin);
+    }
+
+    addBottle(amount) {
+        this.playerBottles += amount;
     }
 
     spawnCoin() {
@@ -190,20 +219,21 @@ class World {
         this.level.coins.splice(index, 1);
     }
 
-
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.shops);
         this.addObjectsToMap(this.level.clouds);
-
         this.ctx.translate(-this.camera_x, 0);
         // ----- space for fixed objects -----
         this.addToMap(this.statusBar);
+        this.addToMap(this.moneyCounter);
+        this.addToMap(this.shopCloud);
+        this.ctx.fillText(this.playerCoins, 100, 98);
         // ----- space for fixed objects -----
         this.ctx.translate(this.camera_x, 0);
-
         this.addObjectsToMap(this.throwableObject);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
@@ -211,8 +241,6 @@ class World {
         this.addObjectsToMap(this.level.obstacleObjects);
 
         this.ctx.translate(-this.camera_x, 0);
-
-
 
         // Draw() wird immer wieder aufgerufen
         let self = this;
@@ -233,10 +261,7 @@ class World {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
-
-
-
+        // mo.drawFrame(this.ctx); // Shows am frame around a object
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }
@@ -258,7 +283,6 @@ class World {
         for (let i = 0; i < Math.random() * 5; i++) {
             let coin = new Coin(position_x + Math.random() * 100, 150 + Math.random() * 200)
             this.level.coins.push(coin);
-            console.log('Coins dropped:', i);
         }
     }
 }

@@ -1,59 +1,62 @@
 class Character extends MovableObject {
-    y = 20;
-    width = 100;
-    height = 200;
+    y = 200;
+    width = 90;
+    height = 140;
     speed = 4;
 
-    collisionBoxOffset = 5;
-
-    originGround = 230;
-
-    relativeGround = 230;
+    offset = 10;
+    originGround = 280;
+    relativeGround = 280;
 
     IMAGES_WALKING = [
-        '../img/2_character_pepe/2_walk/W-21.png',
-        '../img/2_character_pepe/2_walk/W-22.png',
-        '../img/2_character_pepe/2_walk/W-23.png',
-        '../img/2_character_pepe/2_walk/W-24.png',
-        '../img/2_character_pepe/2_walk/W-25.png',
-        '../img/2_character_pepe/2_walk/W-26.png'
+        '../img/2_character_pepe/2_walk/small/W-21.png',
+        '../img/2_character_pepe/2_walk/small/W-22.png',
+        '../img/2_character_pepe/2_walk/small/W-23.png',
+        '../img/2_character_pepe/2_walk/small/W-24.png',
+        '../img/2_character_pepe/2_walk/small/W-25.png',
+        '../img/2_character_pepe/2_walk/small/W-26.png'
     ];
     IMAGES_JUMPING = [
-        'img/2_character_pepe/3_jump/J-31.png',
-        'img/2_character_pepe/3_jump/J-32.png',
-        'img/2_character_pepe/3_jump/J-33.png',
-        'img/2_character_pepe/3_jump/J-34.png',
-        'img/2_character_pepe/3_jump/J-35.png',
-        'img/2_character_pepe/3_jump/J-36.png',
-        'img/2_character_pepe/3_jump/J-37.png',
-        'img/2_character_pepe/3_jump/J-38.png',
-        'img/2_character_pepe/3_jump/J-39.png'
+        'img/2_character_pepe/3_jump/small/J-31.png',
+        'img/2_character_pepe/3_jump/small/J-32.png',
+        'img/2_character_pepe/3_jump/small/J-33.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-34.png',
+        'img/2_character_pepe/3_jump/small/J-35.png',
+        'img/2_character_pepe/3_jump/small/J-36.png',
+        'img/2_character_pepe/3_jump/small/J-37.png',
+        'img/2_character_pepe/3_jump/small/J-38.png',
+        'img/2_character_pepe/3_jump/small/J-39.png'
     ];
     IMAGES_DEAD = [
-        '../img/2_character_pepe/5_dead/D-51.png',
-        '../img/2_character_pepe/5_dead/D-52.png',
-        '../img/2_character_pepe/5_dead/D-53.png',
-        '../img/2_character_pepe/5_dead/D-54.png',
-        '../img/2_character_pepe/5_dead/D-55.png',
-        '../img/2_character_pepe/5_dead/D-56.png',
-        '../img/2_character_pepe/5_dead/D-57.png'
+        '../img/2_character_pepe/5_dead/small/D-51.png',
+        '../img/2_character_pepe/5_dead/small/D-52.png',
+        '../img/2_character_pepe/5_dead/small/D-53.png',
+        '../img/2_character_pepe/5_dead/small/D-54.png',
+        // '../img/2_character_pepe/5_dead/small/D-55.png'
     ];
     IMAGES_HURT = [
-        '../img/2_character_pepe/4_hurt/H-41.png',
-        '../img/2_character_pepe/4_hurt/H-42.png',
-        '../img/2_character_pepe/4_hurt/H-43.png'
+        '../img/2_character_pepe/4_hurt/small/H-41.png',
+        '../img/2_character_pepe/4_hurt/small/H-42.png',
+        '../img/2_character_pepe/4_hurt/small/H-43.png'
     ];
     IMAGES_IDLE = [
-        '../img/2_character_pepe/1_idle/idle/I-1.png',
-        '../img/2_character_pepe/1_idle/idle/I-2.png',
-        '../img/2_character_pepe/1_idle/idle/I-3.png',
-        '../img/2_character_pepe/1_idle/idle/I-4.png',
-        '../img/2_character_pepe/1_idle/idle/I-5.png',
-        '../img/2_character_pepe/1_idle/idle/I-6.png',
-        '../img/2_character_pepe/1_idle/idle/I-7.png',
-        '../img/2_character_pepe/1_idle/idle/I-8.png',
-        '../img/2_character_pepe/1_idle/idle/I-9.png',
-        '../img/2_character_pepe/1_idle/idle/I-10.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-1.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-2.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-3.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-4.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-5.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-6.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-7.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-8.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-9.png',
+        '../img/2_character_pepe/1_idle/idle/small/I-10.png',
     ];
     world;
     walking_sound = new Audio('../audio/step.mp3');
@@ -82,12 +85,12 @@ class Character extends MovableObject {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.otherDirection = false;
                 this.moveRight();
-                this.walking_sound.play();
+                this.checkWalkingSound();
             }
             if (this.world.keyboard.LEFT && this.x > 0) {
                 this.otherDirection = true;
                 this.moveLeft();
-                this.walking_sound.play();
+                this.checkWalkingSound();
             }
             if (this.world.keyboard.UP && !this.isAboveGround()) {
                 this.jump();
@@ -95,6 +98,7 @@ class Character extends MovableObject {
 
             this.world.camera_x = -this.x + 150;
         }, 1000 / 60);
+
 
 
 
@@ -114,5 +118,11 @@ class Character extends MovableObject {
                 }
             }
         }, 80);
+    }
+
+    checkWalkingSound() {
+        if (!this.isAboveGround()) {
+            this.walking_sound.play();
+        }
     }
 }
