@@ -103,6 +103,10 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
+    playAnimationOnce() {
+        // TODO
+    }
+
     jump() {
         this.speedY = 15;
     }

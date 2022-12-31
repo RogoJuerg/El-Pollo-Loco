@@ -7,7 +7,8 @@ class World {
     camera_x = 0;
     statusBar = new StatusBar();
     moneyCounter = new MoneyCounter();
-    shopCloud = new ShopCloud();
+    bottleCounter = new BottleCounter();
+    shopCloud = [];
     throwableObject = [];
     coins = [];
     playerCoins = 0;
@@ -15,7 +16,8 @@ class World {
     showShopCloud = false;
 
     coinCollect_sound = new Audio('../audio/coin_collect.wav');
-    
+    cashRegister_sound = new Audio('../audio/cash_register.wav');
+
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -50,7 +52,13 @@ class World {
 
     checkThrowObjects() {
         if (this.keyboard.D && this.playerBottles > 0) {
-            let bottle = new ThrowableObjects(this.character.x + 70, this.character.y + 10);
+            if(!this.character.otherDirection) {
+                var bottle = new ThrowableObjects(this.character.x + 70, this.character.y + 10);
+                bottle.throw(10);
+            } if(this.character.otherDirection) {
+                var bottle = new ThrowableObjects(this.character.x - 70, this.character.y + 10);
+                bottle.throw(-10);
+            }
             this.throwableObject.push(bottle);
             this.playerBottles -= 1;
         }
@@ -76,7 +84,7 @@ class World {
 
             this.level.obstacleObjects.forEach((obstacle) => {
                 this.compareCollisions(enemy, obstacle);
-                if(obstacle.isCollidingRight(enemy, 0)) {
+                if (obstacle.isCollidingRight(enemy, 0)) {
                     enemy.otherDirection = false;
                 }
                 this.compareCollisions(obstacle, enemy);
@@ -85,7 +93,7 @@ class World {
                     this.compareCollisions(enemy, obstacle2);
                     this.compareCollisions(obstacle2, enemy);
                 });
-                
+
             });
 
         }
@@ -97,7 +105,7 @@ class World {
             this.adjustOriginGround(obstacle);
             this.character.lastRelativeGround = this.character.relativeGround;
 
-            if(this.character.isCollidingBottom(obstacle)) {
+            if (this.character.isCollidingBottom(obstacle)) {
                 this.character.y += 5;
                 this.character.speedY = 0;
             }
@@ -136,16 +144,22 @@ class World {
 
     checkShopCollision() {
         console.log(this.playerBottles);
+        this.shopCloud = [];
         this.level.shops.forEach((shop) => {
-            if(this.character.isColliding(shop, this.character.offset)){
-                console.log('Show bubble'); // Show bubble with info
-                if(this.keyboard.F && this.checkIfPlayerHasEnoughCoind(5)) {
-                    console.log('bought');
-                    this.addBottle(1);
-                    this.playerCoins -= 5;
+            if (this.character.isColliding(shop, this.character.offset)) {
+                let cloud = new ShopCloud();
+                this.shopCloud = [cloud];
+                if (this.keyboard.F && this.checkIfPlayerHasEnoughCoind(5)) {
+                    this.buyBottle();
                 }
             }
         });
+    }
+
+    buyBottle() {
+        this.addBottle(1);
+        this.playerCoins -= 5;
+        this.cashRegister_sound.cloneNode(true).play();
     }
 
     checkIfPlayerHasEnoughCoind(minAmount) {
@@ -226,19 +240,21 @@ class World {
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.shops);
         this.addObjectsToMap(this.level.clouds);
-        this.ctx.translate(-this.camera_x, 0);
-        // ----- space for fixed objects -----
-        this.addToMap(this.statusBar);
-        this.addToMap(this.moneyCounter);
-        this.addToMap(this.shopCloud);
-        this.ctx.fillText(this.playerCoins, 100, 98);
-        // ----- space for fixed objects -----
-        this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.throwableObject);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.obstacleObjects);
+        this.ctx.translate(-this.camera_x, 0);
+        // ----- space for fixed objects -----
+        this.addToMap(this.statusBar);
+        this.addToMap(this.moneyCounter);
+        this.addToMap(this.bottleCounter);
+        this.addObjectsToMap(this.shopCloud);
+        this.ctx.fillText(this.playerCoins, 100, 98);
+        this.ctx.fillText(this.playerBottles, 100, 145);
+        // ----- space for fixed objects -----
+        this.ctx.translate(this.camera_x, 0);
 
         this.ctx.translate(-this.camera_x, 0);
 

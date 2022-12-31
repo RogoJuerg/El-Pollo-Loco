@@ -1,7 +1,5 @@
 const level1 = new Level(
     [
-        new Chicken(200),
-        new Chicken(500),
         new Chicken(600),
         new Chicken(700),
         new Chicken(800),
@@ -47,9 +45,7 @@ const level1 = new Level(
         new BackgroundObject('../img/5_background/layers/1_first_layer/2.png', 719 * 3)
     ],
     [
-        new Box(200, 200),
-        new Box(500, 300),
-        new Box(1000, 100)
+        new Box(600, 200)
     ],
     [
         new Shop(200, 220),
