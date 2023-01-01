@@ -30,34 +30,74 @@ canvas {
     position: absolute;
     width: 50px;
     height: 32px;
-    bottom: 0;
+    bottom: 35px;
     left: 0px;
+    background: none;
+    border: none;
 }
 #btnRight {
     position: absolute;
     width: 50px;
     height: 32px;
-    bottom: 0;
-    left: 50px;
+    bottom: 35px;
+    left: 65px;
+    background: none;
+    border: none;
 }
 #btnJump {
     position: absolute;
     width: 50px;
     height: 32px;
-    bottom: 0;
-    left: 100px;
+    bottom: 35px;
+    right: 20px;
+    background: none;
+    border: none;
 }
 #btnThrow {
     position: absolute;
     width: 50px;
     height: 32px;
-    bottom: 0;
-    left: 150px;
+    bottom: 100px;
+    right: 20px;
+    background: none;
+    border: none;
 }
 #btnBuy {
     position: absolute;
     width: 50px;
     height: 32px;
-    bottom: 0;
-    left: 200px;
+    bottom: 35px;
+    right: 85px;
+    background: none;
+    border: none;
+}
+
+#btnLeft img {
+    width: 56px;
+    height: 56px;
+}
+
+#btnRight img {
+    width: 56px;
+    height: 56px;
+}
+
+#btnJump img {
+    width: 56px;
+    height: 56px;
+}
+
+#btnThrow img {
+    width: 56px;
+    height: 56px;
+}
+
+#btnBuy img {
+    width: 56px;
+    height: 56px;
+    
+}
+
+.hud img:active {
+    filter: invert();
 }
