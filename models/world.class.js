@@ -12,11 +12,17 @@ class World {
     throwableObject = [];
     coins = [];
     playerCoins = 0;
-    playerBottles = 2;
+    playerBottles = 20;
     showShopCloud = false;
+
+    gameStarted = false;
 
     coinCollect_sound = new Audio('../audio/coin_collect.wav');
     cashRegister_sound = new Audio('../audio/cash_register.wav');
+    bottle_sound = new Audio('../audio/glass_break.flac');
+    chicken_hurt_sound = new Audio('../audio/chicken_hurt.wav');
+    winning_sound = new Audio('../audio/sound_winning.wav');
+    game_over_sound = new Audio('./audio/sound_game_over.wav');
 
 
     constructor(canvas, keyboard) {
@@ -31,6 +37,10 @@ class World {
         this.run();
     }
 
+    clearAllIntervals() {
+        for (let i = 1; i < 9999; i++) window.clearInterval(i);
+    }
+
 
     setWorld() {
         this.character.world = this;
@@ -39,9 +49,10 @@ class World {
     run() {
         setInterval(() => {
             this.checkCollisions();
-            this.checkThrowObjects();
+            this.checkPlayerHealth()
         }, 1000 / 60);
-
+        this.actionKeyIntervall();
+        this.spawnChicken();
     }
 
     deleteLastThrownBottle() {
@@ -50,12 +61,26 @@ class World {
         }, 5000);
     }
 
+    actionKeyIntervall() {
+        setInterval(() => {
+            this.checkThrowObjects();
+            this.checkShopCollision();
+        }, 200);
+    }
+
+    checkPlayerHealth() {
+        if(this.character.energy <= 0) {
+            this.game_over_sound.play();
+            this.endGame();
+        }
+    }
+
     checkThrowObjects() {
         if (this.keyboard.D && this.playerBottles > 0) {
-            if(!this.character.otherDirection) {
+            if (!this.character.otherDirection) {
                 var bottle = new ThrowableObjects(this.character.x + 70, this.character.y + 10);
                 bottle.throw(10);
-            } if(this.character.otherDirection) {
+            } if (this.character.otherDirection) {
                 var bottle = new ThrowableObjects(this.character.x - 70, this.character.y + 10);
                 bottle.throw(-10);
             }
@@ -69,8 +94,6 @@ class World {
         this.checkCoinCollision();
         this.checkProjectileCollision();
         this.checkBoxCollision();
-        this.checkShopCollision();
-
         this.adjustOriginGround(this.character);
     }
 
@@ -81,23 +104,18 @@ class World {
                 this.character.hit();
                 this.statusBar.setPercentage(this.character.energy);
             };
-
             this.level.obstacleObjects.forEach((obstacle) => {
                 this.compareCollisions(enemy, obstacle);
                 if (obstacle.isCollidingRight(enemy, 0)) {
                     enemy.otherDirection = false;
                 }
                 this.compareCollisions(obstacle, enemy);
-
                 this.level.obstacleObjects.forEach((obstacle2) => {
                     this.compareCollisions(enemy, obstacle2);
                     this.compareCollisions(obstacle2, enemy);
                 });
-
             });
-
-        }
-        );
+        });
     }
 
     checkBoxCollision() {
@@ -143,13 +161,12 @@ class World {
     }
 
     checkShopCollision() {
-        console.log(this.playerBottles);
         this.shopCloud = [];
         this.level.shops.forEach((shop) => {
             if (this.character.isColliding(shop, this.character.offset)) {
                 let cloud = new ShopCloud();
                 this.shopCloud = [cloud];
-                if (this.keyboard.F && this.checkIfPlayerHasEnoughCoind(5)) {
+                if (this.keyboard.F && this.checkIfPlayerHasEnoughCoins(5)) {
                     this.buyBottle();
                 }
             }
@@ -157,12 +174,12 @@ class World {
     }
 
     buyBottle() {
-        this.addBottle(1);
+        this.addBottle(3);
         this.playerCoins -= 5;
         this.cashRegister_sound.cloneNode(true).play();
     }
 
-    checkIfPlayerHasEnoughCoind(minAmount) {
+    checkIfPlayerHasEnoughCoins(minAmount) {
         return (this.playerCoins >= minAmount);
     }
 
@@ -195,14 +212,45 @@ class World {
         if (this.throwableObject) {
             this.level.enemies.forEach((enemy) => {
                 this.throwableObject.forEach((bottle) => {
-                    if (bottle.isColliding(enemy, bottle.offset)) {
+                    if (bottle.isColliding(enemy, bottle.offset) && enemy instanceof Chicken) {
                         let indexEnemy = this.level.enemies.indexOf(enemy);
-                        this.level.enemies.splice(indexEnemy, 1);
+                        this.playSoundChickenHurt();
                         this.coinExplosion(enemy.x);
+                        this.bottle_sound.cloneNode(true).play();
+                        this.level.backgroundObjects.push(new DeadChicken(enemy.x, enemy.y));
+                        this.level.backgroundObjects.push(new BottleSplash(bottle.x, bottle.y));
+                        this.level.enemies.splice(indexEnemy, 1);
+                    }
+                    if (bottle.isColliding(enemy, bottle.offset) && enemy instanceof Endboss) {
+                        enemy.energy -= 5;
+                        enemy.hit();
+                        if (enemy.energy <= 0) {
+                            let indexEnemy = this.level.enemies.indexOf(enemy);
+                            enemy.isDead();
+                            setInterval(() => {
+                                this.level.enemies.splice(indexEnemy, 1)
+                                this.winning_sound.play();
+                                this.endGame();
+                            }, 2000);
+                        }
                     }
                 })
             })
         }
+    }
+
+    endGame() {
+        this.clearAllIntervals();
+        this.openGameOverScreen();
+    }
+
+    openGameOverScreen() {
+        document.getElementById('GameOverScreen').classList.remove('d-none');;
+    }
+
+    playSoundChickenHurt() {
+        this.chicken_hurt_sound.volume = 0.1;
+        this.chicken_hurt_sound.cloneNode(true).play();
     }
 
     checkCoinCollision() {
@@ -231,6 +279,12 @@ class World {
     removeCoin(coin) {
         let index = this.level.coins.indexOf(coin);
         this.level.coins.splice(index, 1);
+    }
+
+    spawnChicken() {
+        setInterval(() => {
+            this.level.enemies.push(new Chicken(3400, 200));
+        }, 2500);
     }
 
     draw() {
@@ -269,7 +323,6 @@ class World {
         objects.forEach((o) => {
             this.addToMap(o);
         });
-
     }
 
     addToMap(mo) {

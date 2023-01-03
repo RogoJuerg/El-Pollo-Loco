@@ -3,16 +3,25 @@
     src: url('./font/MexicanTequila.ttf');
 }
 
+.d-none {
+    display: none;
+}
+
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: 'MexicanTequila', Arial, sans-serif;
+    margin: 0;
+    background-image: url('./img/5_background/layers/air.png');
 }
 
 canvas {
     background-color: black;
+    display: block;
 }
+
+
 
 .window {
     display: flex;
@@ -35,6 +44,7 @@ canvas {
     background: none;
     border: none;
 }
+
 #btnRight {
     position: absolute;
     width: 50px;
@@ -44,6 +54,7 @@ canvas {
     background: none;
     border: none;
 }
+
 #btnJump {
     position: absolute;
     width: 50px;
@@ -53,6 +64,7 @@ canvas {
     background: none;
     border: none;
 }
+
 #btnThrow {
     position: absolute;
     width: 50px;
@@ -62,6 +74,7 @@ canvas {
     background: none;
     border: none;
 }
+
 #btnBuy {
     position: absolute;
     width: 50px;
@@ -95,9 +108,140 @@ canvas {
 #btnBuy img {
     width: 56px;
     height: 56px;
-    
 }
 
 .hud img:active {
     filter: invert();
+}
+
+.help-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 720px;
+    font-size: 20px;
+    text-align: right;
+}
+
+.des {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.button-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.button-elements img {
+    width: 36px;
+    margin: 4px;
+}
+
+.button-elements span {
+    font-size: 24px;
+    margin-left: 24px;
+}
+
+.game-description {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left: 2px solid black;
+    width: 50%;
+}
+
+.music-btn {
+    position: absolute;
+}
+
+.music-btn button {
+    width: 48px;
+    height: 48px;
+    background: none;
+    border: none;
+    border: 2px solid black;
+    border-radius: 12px;
+    transition: all 125ms ease-in-out;
+}
+
+.music-btn-img {
+    width: 32px;
+    height: 32px;
+}
+
+.music-btn button:hover {
+    background-color: #ffdf00;
+    transition: all 125ms ease-in-out;
+    cursor: pointer;
+}
+
+/* Smartphones */
+@media only screen and (max-width: 720px) {
+    canvas {
+        width: 100%;
+    }
+
+    .help-section {
+        display: none;
+    }
+}
+
+@media only screen and (max-height: 480px) {
+    canvas {
+        height: 100vh;
+    }
+
+    h1 {
+        display: none;
+    }
+
+    .help-section {
+        display: none;
+    }
+}
+
+@media only screen and (min-height: 480px) {
+    .hud {
+        display: none;
+    }
+}
+
+.start-screen {
+    position: absolute;
+    width: 720px;
+    height: 100%;
+    background: url('./img/9_intro_outro_screens/start/startscreen_1.png');
+    background-size: cover;
+}
+
+.start-screen img {
+    width: 720px;
+    height: 480px;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.start-screen button {
+    position: absolute;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 6px;
+    height: 60px;
+    width: 260px;
+    font-size: 24px;
+    font-family: 'MexicanTequila', Arial, sans-serif;
+    top: 60px;
+    right: calc(50% - 130px);
+    cursor: pointer;
+    transition: 85ms all ease-in-out;
+}
+
+.start-screen button:hover {
+    background-color: #ffdf00;
+    font-size: 32px;
+    transition: 85ms all ease-in-out;
 }

@@ -3,11 +3,34 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
+let toggle = false;
+let music = new Audio('../audio/music.mp3');
+
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
 }
 
+function removeStartScreen() {
+    document.getElementById('startScreen').classList.add('d-none');
+}
+
+function reloadPage() {
+    window.location.reload();
+}
+
+function toggleMusic() {
+    let buttonIMG = document.getElementById('musicBtn');
+        if (toggle == false) {
+            music.play();
+            buttonIMG.src = '../img/buttons/volume.png';
+            toggle = true;
+        } else {
+            music.pause();
+            buttonIMG.src = '../img/buttons/mute.png';
+            toggle = false;
+        }
+    };
 
 window.addEventListener("keydown", (e) => {
     if (e.keyCode == 39) {

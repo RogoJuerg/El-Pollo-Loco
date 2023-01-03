@@ -8,6 +8,7 @@
     <link href="./font/MexicanTequila.ttf" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
     <title>El Pollo Loco</title>
+    <link rel="icon" type="image/x-icon" href="./img/6_salsa_bottle/salsa_bottle.png">
     <script src="./models/drawable-object.class.js"></script>
     <script src="./models/movable-objects.class.js"></script>
     <script src="./models/obstacle-object.class.js"></script>
@@ -28,11 +29,13 @@
     <script src="./models/box.class.js"></script>
     <script src="./models/shop.class.js"></script>
     <script src="./models/plattform.class.js"></script>
+    <script src="./models/dead-chicken.class.js"></script>
+    <script src="./models/bottle-splash.class.js"></script>
     <script src="./levels/level1.js"></script>
     <script src="./js/game.js"></script>
 </head>
 
-<body onload="init()">
+<body>
 
     <h1>El Pollo Loco</h1>
 
@@ -43,9 +46,47 @@
             <button id="btnJump"><img src="./img/buttons/arrow_up.png"></button>
             <button id="btnThrow"><img src="./img/buttons/btn_throw.png"></button>
             <button id="btnBuy"><img src="./img/buttons/btn_money.png"></button>
-
+        </div>
+        <div class="start-screen" id="startScreen">
+            <button id="startBtn" onclick="removeStartScreen(), initLevel(), init()">Start Game</button>
+        </div>
+        <div class="start-screen d-none" id="GameOverScreen">
+            <img src="./img/9_intro_outro_screens/game_over/game over.png">
+            <button id="restartBtn" onclick="reloadPage()">Restart Game</button>
         </div>
         <canvas id="canvas" width="720" height="480"></canvas>
+        <div class="music-btn">
+            <button onclick="toggleMusic()"><img id="musicBtn" class="music-btn-img" src="../img/buttons/mute.png"></button>
+        </div>
+    </div>
+    <div class="help-section">
+        <div class="button-elements">
+            <div class="des">
+                <img src="./img/buttons/arrow_left.png">
+                <img src="./img/buttons/arrow_right.png">
+                <span>Walk = Left/Right</span>
+            </div>
+            <div class="des">
+                <img src="./img/buttons/arrow_up.png"> 
+                <span>Jump = Spacebar</span>
+            </div>
+            <div class="des">
+                <img src="./img/buttons/btn_throw.png">
+                <span>Throw Bottle = D</span>
+            </div>
+            <div class="des">
+                <img src="./img/buttons/btn_money.png">
+                <span>Buy Bottle = F</span>
+            </div>
+        </div>
+
+        <div class="game-description">
+            <p>Our hero called "El Pollo Loco" has to defeat the evil giant chicken to rescue his village.
+                Tequilla is not cheap so you have to buy it at your local shop.
+                Be careful! That giant chicken likes to throw his minions at his enemies!
+                And do not try to jump on a chicken to defeat it... This is not a video game!
+            </p>
+        </div>
     </div>
 
     </canvas>
